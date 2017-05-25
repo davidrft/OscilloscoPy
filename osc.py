@@ -24,8 +24,8 @@ class Osc(usbtmc.Instrument):
         return float(self.ask(":TIM:SCAL?"))
         
         
-    def get_time_offset(self):
-        return float(self.ask(":TIM:OFFS?"))
+    #def get_time_offset(self):
+    #    return float(self.ask(":TIM:OFFS?"))
         
         
     def get_volt_scale(self, channel):
