@@ -47,12 +47,12 @@ class Osc(usbtmc.Instrument):
         return float(self.ask(":CHAN{}:OFFS?".format(channel)))
 
     
-#    def set_scale(self, channel, scale):
-#        self.write(":CHAN{}:SCAL{}".format(channel, scale))
+    def set_scale(self, channel, scale):
+        self.write(":CHAN{}:SCAL {}".format(channel, scale))
 
     
-#    def set_offset(self, channel, offset):
-#        self.write(":CHAN{}:OFFS{}".format(channel, offset))
+    def set_offset(self, channel, offset):
+        self.write(":CHAN{}:OFFS {}".format(channel, offset))
 
 
     def gen_sin(self, freq, amp, offs=0):
