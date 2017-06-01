@@ -86,12 +86,16 @@ class Osc(usbtmc.Instrument):
         else:
             self.write("CHAN" + str(channel) + ":DISP ON")
     
+    def get_vpp(self, channel):
+        self.write(":MEAS:VPP? CHAN{}".format(channel))
+        return self.read()
+    
 #    def save_img(self):
         #self.stop()
         #self.write(":SYST:HEAD OFF")
         #self.write(":WAV:SOUR CHAN1")
         #self.write(":WAV:POIN:MODE NORM")
-        
+    
         #self.write(":WAV:DATA?")
         #rawdata = self.read_raw(9000)
         #data = np.frombuffer(rawdata, 'B')
