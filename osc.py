@@ -51,6 +51,9 @@ class Osc(usbtmc.Instrument):
     def set_scale(self, channel, scale):
         self.write(":CHAN{}:SCAL {}".format(channel, scale))
 
+    def get_vpp(self, channel):
+        self.write(":MEAS:VPP? CHAN{}".format(channel))
+        return self.read()
     
     def set_offset(self, channel, offset):
         self.write(":CHAN{}:OFFS {}".format(channel, offset))
@@ -116,7 +119,7 @@ class Osc(usbtmc.Instrument):
         yorigin = float(self.ask(":WAV:YOR?"))
         yref = float(self.ask(":WAV:YREF?"))
         yinc = float(self.ask(":WAV:YINC?"))
-        
+
         data = ((data - yref) * yinc) + yorigin 
         
         self.run()
