@@ -11,6 +11,7 @@ def list_devices():
             inst = usbtmc.Instrument(i)
             print(inst.ask("*IDN?"))
 
+
 class Osc(usbtmc.Instrument):
     
     def __init__(self, pos = 0):
@@ -40,6 +41,10 @@ class Osc(usbtmc.Instrument):
     def get_time_scale(self):
         """Returns current time scale."""
         return float(self.ask(":TIM:SCAL?"))
+    
+    def set_time_scale(self, scale):
+        """Returns current time scale."""
+        self.write(":TIM:SCAL {}".format(scale))
         
     def get_time_pos(self):
         """Returns current time delay."""
@@ -60,25 +65,7 @@ class Osc(usbtmc.Instrument):
         channel -- selected channel
         """
         return float(self.ask(":CHAN{}:OFFS?".format(channel)))
-
-    def set_volt_scale(self, channel, scale):
-        """Sets voltage scale of the selected schannel to chosen value.
-
-        Args:
-        channel -- selected channel
-        scale -- value to set
-        """
-        self.write(":CHAN{}:SCAL {}".format(channel, scale))
-
-    def set_volt_offset(self, channel, offset):
-        """Sets voltage offset of the selected schannel to choosen value.
-
-        Args:
-        channel -- selected channel
-        offset -- value to set
-        """
-        self.write(":CHAN{}:OFFS {}".format(channel, offset))
-
+    
     def get_vpp(self, channel):
         """Returns peak-to-peak measurement of the selected channel.
 
@@ -87,6 +74,60 @@ class Osc(usbtmc.Instrument):
         """
         self.write(":MEAS:VPP? CHAN{}".format(channel))
         return self.read()
+    
+    def get_vrms(self, channel):
+        """Returns rms measurement of the selected channel.
+
+        Args:
+        channel -- selected channel
+        """
+        self.write(":MEAS:VRMS? CHAN{}".format(channel))
+        return self.read()
+    
+    def get_frequency(self, channel):
+        """Returns frequency measurement of the selected channel.
+
+        Args:
+        channel -- selected channel
+        """
+        self.write(":MEAS:FREQ? CHAN{}".format(channel))
+        return self.read()
+    
+    def get_period(self, channel):
+        """Returns period measurement of the selected channel.
+
+        Args:
+        channel -- selected channel
+        """
+        self.write(":MEAS:PER? CHAN{}".format(channel))
+        return self.read()
+
+    def set_volt_scale(self, channel, scale):
+        """Sets voltage scale of the selected channel to chosen value.
+
+        Args:
+        channel -- selected channel
+        scale -- value to set
+        """
+        self.write(":CHAN{}:SCAL {}".format(channel, scale))
+
+    def set_volt_offset(self, channel, offset):
+        """Sets voltage offset of the selected channel to chosen value.
+
+        Args:
+        channel -- selected channel
+        offset -- value to set
+        """
+        self.write(":CHAN{}:OFFS {}".format(channel, offset))
+        
+    def set_coupling(self, channel, mode):
+        """Sets coupling mode of the selected channel to chosen value.
+
+        Args:
+        channel -- selected channel
+        mode -- "AC" or "DC"
+        """
+        self.write(":CHAN{}:COUP {}".format(channel, mode))
     
     def gen_sin(self, amp, freq, offs=0.0):
         """Generates a sinoidal wave.
