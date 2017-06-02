@@ -171,11 +171,11 @@ class Osc(usbtmc.Instrument):
         Args:
         channel -- selected channel
         """
-        status = self.ask("CHAN" + str(channel) + ":DISP?") == "1"
+        status = self.ask("CHAN{}:DISP?".format(channel)) == "1"
         if status:
-            self.write("CHAN" + str(channel) + ":DISP OFF")
+            self.write("CHAN{}:DISP OFF".format(channel))
         else:
-            self.write("CHAN" + str(channel) + ":DISP ON")
+            self.write("CHAN{}:DISP ON".format(channel))
     
     def get_data(self, channel):
         """Returns wave data from selected channel as a numpy array.
@@ -185,7 +185,7 @@ class Osc(usbtmc.Instrument):
         """
         self.stop()
         self.write(":SYST:HEAD OFF")
-        self.write(":WAVEFORM:SOURCE CHAN" + str(channel))
+        self.write(":WAVEFORM:SOURCE CHAN{}".format(channel))
         self.write(":WAVEFORM:POIN:MODE MAX")
         self.write(":WAVEFORM:FORMAT BYTE")
         
@@ -227,7 +227,7 @@ class Osc(usbtmc.Instrument):
         voltoffs = self.get_volt_offset(channel)
         
         plt.plot(time, data)
-        plt.title("Oscilloscope Channel " + str(channel))
+        plt.title("Oscilloscope Channel {}".format(channel))
         plt.ylabel("Voltage (V)")
         plt.xlabel("Time ({})".format(t_unit))
         plt.xlim(time[0], time[-1])
