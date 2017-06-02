@@ -62,7 +62,7 @@ class Osc(usbtmc.Instrument):
         return float(self.ask(":CHAN{}:OFFS?".format(channel)))
 
     def set_volt_scale(self, channel, scale):
-        """Sets voltage scale of the selected schannel to choosen value.
+        """Sets voltage scale of the selected schannel to chosen value.
 
         Args:
         channel -- selected channel
