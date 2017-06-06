@@ -21,10 +21,16 @@ TODO
 ```
 Example
 ```
- 
+
+### Examples
+
+```
+Example
+```
+
 ## Authors
 
 * **David Riff** - [davidrft](https://github.com/davidrft/)
 * **Diego Hamilton** - [diegomhamilton](https://github.com/diegomhamilton)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/davidrft/PyOscilloscope/contributors) who participated in this project.
