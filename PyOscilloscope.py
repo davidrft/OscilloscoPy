@@ -14,6 +14,12 @@ def list_devices():
 
 class Osc(usbtmc.Instrument):
     
+    class Generator():
+        
+    class Channel():
+    
+    class Trigger():
+    
     def __init__(self, pos = 0):
         """Initializes a new device.
 
@@ -21,6 +27,8 @@ class Osc(usbtmc.Instrument):
         pos -- device position in devices list (provided by list_devices())
         """
         super(Osc, self).__init__(usbtmc.list_resources()[pos])
+        self.write(":WAV:FORM BYTE")
+        self.write(":WAV:POIN:MODE MAX")
             
     def reset(self):
         """Resets device."""
@@ -218,30 +226,33 @@ class Osc(usbtmc.Instrument):
         else:
             self.write("CHAN{}:DISP ON".format(channel))
     
-    def get_data(self, channel):
+    def get_data(self, channel, points=1000):
         """Returns wave data from selected channel as a numpy array.
 
         Args:
         channel -- selected channel
         """
-        self.stop()
-        self.write(":SYST:HEAD OFF")
-        self.write(":WAVEFORM:SOURCE CHAN{}".format(channel))
-        self.write(":WAVEFORM:POIN:MODE MAX")
-        self.write(":WAVEFORM:FORMAT BYTE")
-        
+        self.write(":DIG CHAN{}".format(channel))
+        self.write(":WAV:POIN {}".format(points))
+        self.write(":WAV:SOURCE CHAN{}".format(channel))
+        #colocar digitize
         self.write(":WAV:DATA?")
         rawdata = self.read_raw()
-        data = np.frombuffer(rawdata, 'B')
+        data = np.frombuffer(rawdata[10:-1], 'B')
         
         yorigin = float(self.ask(":WAV:YOR?"))
         yref = float(self.ask(":WAV:YREF?"))
         yinc = float(self.ask(":WAV:YINC?"))
-
-        data = ((data - yref) * yinc) + yorigin 
         
-        self.run()
-        return data
+        xorigin = float(self.ask(":WAV:XOR?"))
+        xref = float(self.ask(":WAV:XREF?"))
+        xinc = float(self.ask(":WAV:XINC?"))
+
+        data_y = ((data - yref) * yinc) + yorigin
+        data_x = np.array(range(len(data)))
+        data_x = ((data_x - xref)) * xinc + xorigin
+        
+        return data_x, data_y
             
     def show_img(self, channel=1):
         """Prints acquired waveform from selected channel on PC.
@@ -249,11 +260,9 @@ class Osc(usbtmc.Instrument):
         Args:
         channel -- selected channel (default 1)
         """
-        data = self.get_data(channel)
-        
-        timescale = float(self.ask(":TIM:SCAL?"))
-                          
-        time = np.linspace(-5*timescale, 5*timescale, len(data))
+        self.stop()
+        time, data = self.get_data(channel)
+        self.run()
         
         if (time[-1] < 1e-3):
             time = time * 1e6
