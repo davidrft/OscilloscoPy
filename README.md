@@ -9,7 +9,9 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 [Python 3](https://www.python.org/)
+
 [PyUSB](https://walac.github.io/pyusb/)
+
 [python-usbtmc](https://github.com/python-ivi/python-usbtmc)
 
 ### Installing
