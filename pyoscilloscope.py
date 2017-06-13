@@ -11,13 +11,22 @@ def list_devices():
             inst = usbtmc.Instrument(i)
             print(inst.ask("*IDN?"))
 
+def instrument(pos):
+        """Returns a new instrument.
+
+        Args:
+        pos -- device position in devices list (provided by list_devices())
+        """
+
+    return usbtmc.Instrument(usbtmc.list_resources()[pos])
+
 
 class Generator:
     def __init__(self, inst):
         """Initializes a new device.
 
         Args:
-        pos -- device position in devices list (provided by list_devices())
+        inst -- instrument in which the generator is
         """
         self.inst = inst
         self.inst.write(":WAV:FORM BYTE")
@@ -105,7 +114,7 @@ class Channels:
         """Initializes a new device.
 
         Args:
-        pos -- device position in devices list (provided by list_devices())
+        inst -- instrument in which the channels are
         """
         self.inst = inst
         self.inst.write(":WAV:FORM BYTE")
@@ -245,7 +254,7 @@ class Oscilloscope():
         """Initializes a new device.
 
         Args:
-        pos -- device position in devices list (provided by list_devices())
+        inst -- instrument in which the oscilloscope is
         """
         self.inst = inst
             
