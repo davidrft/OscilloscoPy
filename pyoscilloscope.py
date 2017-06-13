@@ -17,7 +17,6 @@ def instrument(pos):
         Args:
         pos -- device position in devices list (provided by list_devices())
         """
-
     return usbtmc.Instrument(usbtmc.list_resources()[pos])
 
 
