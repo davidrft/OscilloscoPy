@@ -80,8 +80,7 @@ class Osc(usbtmc.Instrument):
         Args:
         channel -- selected channel
         """
-        self.write(":MEAS:VPP? CHAN{}".format(channel))
-        return self.read()
+        return float(self.ask(":MEAS:VPP? CHAN{}".format(channel)))
     
     def get_vrms(self, channel):
         """Returns rms measurement of the selected channel.
@@ -89,8 +88,7 @@ class Osc(usbtmc.Instrument):
         Args:
         channel -- selected channel
         """
-        self.write(":MEAS:VRMS? CHAN{}".format(channel))
-        return self.read()
+        return float(self.ask(":MEAS:VRMS? CHAN{}".format(channel)))
     
     def get_frequency(self, channel):
         """Returns frequency measurement of the selected channel.
@@ -98,8 +96,7 @@ class Osc(usbtmc.Instrument):
         Args:
         channel -- selected channel
         """
-        self.write(":MEAS:FREQ? CHAN{}".format(channel))
-        return self.read()
+        return float(self.ask(":MEAS:FREQ? CHAN{}".format(channel)))
     
     def get_period(self, channel):
         """Returns period measurement of the selected channel.
@@ -107,8 +104,7 @@ class Osc(usbtmc.Instrument):
         Args:
         channel -- selected channel
         """
-        self.write(":MEAS:PER? CHAN{}".format(channel))
-        return self.read()
+        return float(self.ask(":MEAS:PER? CHAN{}".format(channel)))
 
     def set_volt_scale(self, channel, scale):
         """Sets voltage scale of the selected channel to chosen value.
