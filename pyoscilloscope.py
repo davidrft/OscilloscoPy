@@ -12,12 +12,12 @@ def list_devices():
             print(inst.ask("*IDN?"))
 
 def instrument(pos):
-        """Returns a new instrument.
+	"""Returns a new instrument.
 
-        Args:
-        pos -- device position in devices list (provided by list_devices())
-        """
-    return usbtmc.Instrument(usbtmc.list_resources()[pos])
+	Args:
+	pos -- device position in devices list (provided by list_devices())
+	"""
+	return usbtmc.Instrument(usbtmc.list_resources()[pos])
 
 
 class Generator:
