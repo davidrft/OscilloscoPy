@@ -39,7 +39,7 @@ class Generator:
         freq -- wave frequency
         offs -- wave offset (default 0.0)
         """
-        self.gen_on()
+        self.on()
         self.inst.write("WGEN:FUNC SIN;FREQ {};VOLT {};VOLT:OFFS {}"
                    .format(freq, amp, offs))
 
@@ -52,7 +52,7 @@ class Generator:
         duty_cycle -- wave duty_cicle (default 50.0)
         offs -- wave offset (default 0.0)
         """
-        self.gen_on()
+        self.on()
         self.inst.write("WGEN:FUNC SQU;FREQ {};VOLT {};VOLT:OFFS {};:WGEN:FUNC:SQU:DCYC {}"
                    .format(freq, amp, offs, duty_cicle))
         
@@ -65,7 +65,7 @@ class Generator:
         duty_cycle -- wave symmetry (default 50.0)
         offs -- wave offset (default 0.0)
         """
-        self.gen_on()
+        self.on()
         self.inst.write("WGEN:FUNC RAMP;FREQ {};VOLT {};VOLT:OFFS {};:WGEN:FUNC:RAMP:SYMM {}"
                    .format(freq, amp, offs, symmetry))
     
@@ -78,7 +78,7 @@ class Generator:
         width -- pulse width
         offs -- wave offset (default 0.0)
         """
-        self.gen_on()
+        self.on()
         self.inst.write("WGEN:FUNC PULS;FREQ {};VOLT:HIGH {};VOLT:LOW {};:WGEN:FUNC:PULS:WIDT {}"
                    .format(freq, amp, offs, width))
 
@@ -88,7 +88,7 @@ class Generator:
         Args:
         amp -- wave amplitude
         """
-        self.gen_on()
+        self.on()
         self.inst.write("WGEN:FUNC DC;VOLT:OFFS {}".format(amp))
         
     def noise(self, amp, offs=0.0):
@@ -179,6 +179,17 @@ class Channels:
         """
         return float(self.inst.ask(":MEAS:PER? CHAN{}".format(channel)))
 
+    def get_phase(self, sel_channel, ref_channel):
+        """Returns phase difference between selected and reference channel
+        in degrees.
+
+        Args:
+        sel_channel -- selected channel
+        ref_channel -- reference channel
+        """
+        return float(self.inst.ask("MEAS:PHAS? CHAN{},CHAN{}"
+                                   .format(sel_channel, ref_channel)))
+                                   
     def set_volt_scale(self, channel, scale):
         """Sets voltage scale of the selected channel to chosen value.
 
@@ -272,33 +283,7 @@ class Oscilloscope():
     def single(self):
         """Acquire a single waveform and then stops."""
         self.inst.write(":SINGLE")
-            
-    #def show_img(self, channel=1):
-        #"""Prints acquired waveform from selected channel on PC.
-
-        #Args:
-        #channel -- selected channel (default 1)
-        #"""
-        #self.stop()
-        #time, data = self.get_data(channel)
-        #self.run()
-        
-        #if (time[-1] < 1e-3):
-            #time = time * 1e6
-            #t_unit = "uS"
-        #elif (time[-1] < 1):
-            #time = time * 1e3
-            #t_unit = "mS"
-        #else:
-            #t_unit = "S"
-        
-        #voltscale = self.get_volt_scale(channel)
-        #voltoffs = self.get_volt_offset(channel)
-        
-        #plt.plot(time, data)
-        #plt.title("Oscilloscope Channel {}".format(channel))
-        #plt.ylabel("Voltage (V)")
-        #plt.xlabel("Time ({})".format(t_unit))
-        #plt.xlim(time[0], time[-1])
-        #plt.ylim(-4*voltscale, 4*voltscale)
-        #plt.show()
+    
+    def auto_scale(self):
+        """"""
+        self.inst.write(":AUT")        
