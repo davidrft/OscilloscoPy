@@ -258,8 +258,7 @@ class Channels:
         
         return data_x, data_y
 
-class Oscilloscope():
-    
+class Oscilloscope():    
     def __init__(self, inst):
         """Initializes a new device.
 
@@ -287,3 +286,12 @@ class Oscilloscope():
     def auto_scale(self):
         """"""
         self.inst.write(":AUT")        
+        
+    def set_acquire(self, mode):
+        """Set the waveform acquire mode.
+
+        Args:
+        mode -- 'normal', 'average', 'hres' or 'peak'
+        """
+        self.inst.write(":ACQ:TYPE {}".format(mode.upper())
+    
