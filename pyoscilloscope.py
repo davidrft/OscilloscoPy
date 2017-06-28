@@ -293,5 +293,5 @@ class Oscilloscope():
         Args:
         mode -- 'normal', 'average', 'hres' or 'peak'
         """
-        self.inst.write(":ACQ:TYPE {}".format(mode.upper())
+        self.inst.write(":ACQ:TYPE {}".format(mode.upper()))
     
