@@ -3,6 +3,11 @@ import usbtmc
 
 class Infiniivision:
     def __init__(self, pos = 0):
+        """Initializes a Keysight InfiniiVision oscilloscpe.
+
+        Args:
+        pos -- position of device in devices list (provided by list_devices() from PyOscilloscope) (default 0)
+        """
         self.inst = posc.instrument(pos)
         self.gen = posc.Generator(self.inst)
         self.chan = posc.Channels(self.inst)

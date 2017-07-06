@@ -2,6 +2,7 @@ import usbtmc
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def list_devices():
     """List all usbtmc compatible devices connected to PC."""
     if not usbtmc.list_resources():
@@ -10,6 +11,7 @@ def list_devices():
         for i in usbtmc.list_resources():
             inst = usbtmc.Instrument(i)
             print(inst.ask("*IDN?"))
+
 
 def instrument(pos):
 	"""Returns a new instrument.
@@ -49,7 +51,7 @@ class Generator:
         Args:
         amp -- wave amplitude
         freq -- wave frequency
-        duty_cycle -- wave duty_cicle (default 50.0)
+        duty_cycle -- wave duty_cicle in % (default 50.0)
         offs -- wave offset (default 0.0)
         """
         self.on()
@@ -62,7 +64,7 @@ class Generator:
         Args:
         amp -- wave amplitude
         freq -- wave frequency
-        duty_cycle -- wave symmetry (default 50.0)
+        duty_cycle -- wave symmetry in % (default 50.0)
         offs -- wave offset (default 0.0)
         """
         self.on()
@@ -101,13 +103,14 @@ class Generator:
         self.inst.write("WGEN:FUNC NOIS;VOLT {};VOLT:OFFS {}".format(amp, offs))
     
     def on(self):
-        #Turns Wave Generator on.
+        """Turns Wave Generator on."""
         self.inst.write("WGEN:OUTP ON")
         
     def off(self):
-        #Turns Wave Generator off.
+        """Turns Wave Generator off."""
         self.inst.write("WGEN:OUTP OFF")
-                            
+
+
 class Channels:
     def __init__(self, inst):
         """Initializes a new device.
@@ -127,9 +130,17 @@ class Channels:
         """Returns current time scale."""
         self.inst.write(":TIM:SCAL {}".format(scale))
         
-    def get_time_pos(self):
+    def get_time_delay(self):
         """Returns current time delay."""
         return float(self.inst.ask(":TIM:POS?"))
+    
+    def set_time_delay(self, delay):
+        """Sets time delay to chosen value.
+        
+        Args:
+        delay -- time delay to set
+        """
+        self.inst.write(":TIM:POS {}".format(delay))
 
     def get_volt_scale(self, channel):
         """Returns current voltage scale of the selected channel.
@@ -137,7 +148,16 @@ class Channels:
         Args:
         channel -- selected channel
         """
-        return float(self.inst.ask(":CHAN{}:SCAL?".format(channel)))
+        return float(self.inst.ask(":CHAN{}:SCAL?".format(channel)))                   
+
+    def set_volt_scale(self, channel, scale):
+        """Sets voltage scale of the selected channel to chosen value.
+
+        Args:
+        channel -- selected channel
+        scale   -- voltage scale to set
+        """
+        self.inst.write(":CHAN{}:SCAL {}".format(channel, scale))
         
     def get_volt_offset(self, channel):
         """Returns current voltage offset of the selected channel.
@@ -146,7 +166,35 @@ class Channels:
         channel -- selected channel
         """
         return float(self.inst.ask(":CHAN{}:OFFS?".format(channel)))
+
+    def set_volt_offset(self, channel, offset):
+        """Sets voltage offset of the selected channel to chosen value.
+
+        Args:
+        channel -- selected channel
+        offset  -- voltage offset to set
+        """
+        self.inst.write(":CHAN{}:OFFS {}".format(channel, offset))
+
+    def auto_trigger(self, channel):
+        """Set trigger level to 50% in selected channel.
+        
+        Args:
+        channel -- selected channel
+        """
+        self.inst.write(":TRIG:SOUR CHAN{}".format(channel))
+        self.inst.write(":TRIG:LEV:ASET")
     
+    def set_trigger(self, channel, level=0):
+        """Set trigger level to chosen value in selected channel.
+        
+        Args:
+        channel -- selected channel
+        level   -- trigger level to set in volts (default 0)
+        """
+        self.inst.write(":TRIG:SOUR CHAN{}".format(channel))
+        self.inst.write(":TRIG:LEV {}".format(level))
+
     def get_vpp(self, channel):
         """Returns peak-to-peak measurement of the selected channel.
 
@@ -189,34 +237,15 @@ class Channels:
         """
         return float(self.inst.ask("MEAS:PHAS? CHAN{},CHAN{}"
                                    .format(sel_channel, ref_channel)))
-                                   
-    def set_volt_scale(self, channel, scale):
-        """Sets voltage scale of the selected channel to chosen value.
-
-        Args:
-        channel -- selected channel
-        scale -- value to set
-        """
-        self.inst.write(":CHAN{}:SCAL {}".format(channel, scale))
-
-    def set_volt_offset(self, channel, offset):
-        """Sets voltage offset of the selected channel to chosen value.
-
-        Args:
-        channel -- selected channel
-        offset -- value to set
-        """
-        self.inst.write(":CHAN{}:OFFS {}".format(channel, offset))
         
     def set_coupling(self, channel, mode):
         """Sets coupling mode of the selected channel to chosen value.
 
         Args:
         channel -- selected channel
-        mode -- "AC" or "DC"
+        mode    -- "AC" or "DC"
         """
         self.inst.write(":CHAN{}:COUP {}".format(channel, mode))
-    
 
     def toggle_channel(self, channel):
         """Toggles selected channel status.
@@ -235,11 +264,11 @@ class Channels:
 
         Args:
         channel -- selected channel
+        points  -- number of points to be acquired
         """
         self.inst.write(":DIG CHAN{}".format(channel))
         self.inst.write(":WAV:POIN {}".format(points))
         self.inst.write(":WAV:SOURCE CHAN{}".format(channel))
-        #colocar digitize
         self.inst.write(":WAV:DATA?")
         rawdata = self.inst.read_raw()
         data = np.frombuffer(rawdata[10:-1], 'B')
@@ -257,6 +286,7 @@ class Channels:
         data_x = ((data_x - xref)) * xinc + xorigin
         
         return data_x, data_y
+
 
 class Oscilloscope():    
     def __init__(self, inst):
@@ -284,7 +314,7 @@ class Oscilloscope():
         self.inst.write(":SINGLE")
     
     def auto_scale(self):
-        """"""
+        """Auto scale active channels."""
         self.inst.write(":AUT")        
         
     def set_acquire(self, mode):
@@ -294,4 +324,4 @@ class Oscilloscope():
         mode -- 'normal', 'average', 'hres' or 'peak'
         """
         self.inst.write(":ACQ:TYPE {}".format(mode.upper()))
-    
+
