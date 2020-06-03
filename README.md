@@ -1,4 +1,4 @@
-# PyOscilloscope
+# OscilloscoPy
 
 Library that implements a high level interface in python to control USBTMC oscilloscopes and wave generators.
 

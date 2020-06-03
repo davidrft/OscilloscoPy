@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "oscilloscopy"
+version = "0.2.0"
+description = "Library that implements a high level interface in python to control USBTMC oscilloscopes and wave generators."
+authors = ["David Riff <davidriff@outlook.com>", "Diego Hamilton <diegohamilton26@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "^1.18.4"
+python-usbtmc = "^0.8"
+pyusb = "^1.0.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
