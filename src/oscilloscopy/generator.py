@@ -22,19 +22,19 @@ class Generator:
             "WGEN:FUNC SIN;FREQ {};VOLT {};VOLT:OFFS {}".format(freq, amp, offs)
         )
 
-    def sqr(self, amp, freq, duty_cicle=50.0, offs=0.0):
+    def square(self, amp, freq, duty_cycle=50.0, offs=0.0):
         """Generates a square wave.
 
         Args:
         amp -- wave amplitude
         freq -- wave frequency
-        duty_cycle -- wave duty_cicle in % (default 50.0)
+        duty_cycle -- wave duty_cycle in % (default 50.0)
         offs -- wave offset (default 0.0)
         """
         self.on()
         self.inst.write(
             "WGEN:FUNC SQU;FREQ {};VOLT {};VOLT:OFFS {};:WGEN:FUNC:SQU:DCYC {}".format(
-                freq, amp, offs, duty_cicle
+                freq, amp, offs, duty_cycle
             )
         )
 
